@@ -1,0 +1,543 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ShopInsight | Smart Retail Analytics</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <h2 class="logo">Shop<span>Insight</span></h2>
+
+        <nav>
+            <a href="#dashboard" class="active">▦ Dashboard</a>
+            <a href="#analytics">📊 Analytics</a>
+            <a href="#sales">💰 Sales</a>
+            <a href="#products">📦 Products</a>
+            <a href="#addProductSection">➕ Add Product</a>
+            <a href="#alerts">⚠️ Stock Alerts</a>
+
+            <button type="button" id="logoutButton">Logout</button>
+        </nav>
+
+        <div class="sidebar-footer">
+            Smart Retail Analytics
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="topbar">
+
+            <div>
+                <h1>Dashboard</h1>
+                <p>Welcome to your smart retail overview!</p>
+            </div>
+
+            <div class="profile">SI</div>
+
+        </header>
+
+
+        <!-- DASHBOARD CARDS -->
+        <section id="dashboard" class="stats">
+
+            <div class="card">
+                <p>Total Products</p>
+                <h2 id="totalProducts">0</h2>
+                <span>Products in your shop</span>
+            </div>
+
+            <div class="card">
+                <p>Total Stock Units</p>
+                <h2 id="totalStock">0</h2>
+                <span>Units available</span>
+            </div>
+
+            <div class="card">
+                <p>Potential Sales Value</p>
+                <h2 id="stockValue">₹0</h2>
+                <span>Value if all stock is sold</span>
+            </div>
+
+            <div class="card">
+                <p>Total Stock Cost</p>
+                <h2 id="totalStockCost">₹0</h2>
+                <span>Cost of available stock</span>
+            </div>
+
+            <div class="card">
+                <p>Potential Gross Profit</p>
+                <h2 id="potentialProfit">₹0</h2>
+                <span>Estimated profit before expenses</span>
+            </div>
+
+            <div class="card alert-card" id="alerts">
+                <p>Low Stock Alerts</p>
+                <h2 id="lowStock">0</h2>
+                <span>Products needing attention</span>
+            </div>
+
+        </section>
+
+
+        <!-- RETAIL ANALYTICS -->
+        <section id="analytics" class="analytics-section">
+
+            <h2>Retail Analytics</h2>
+
+            <p>
+                Visual insights into your shop's inventory and stock value.
+            </p>
+
+            <div class="charts-grid">
+
+                <div class="chart-card">
+                    <h3>Stock by Category</h3>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Cost vs Selling Value</h3>
+                    <canvas id="valueChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Stock Status Distribution</h3>
+                    <canvas id="stockChart"></canvas>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- PRODUCT MANAGEMENT -->
+        <section id="products" class="panel">
+
+            <div class="panel-header">
+
+                <div>
+                    <h2>Product Management</h2>
+                    <p>Manage and monitor your products.</p>
+                </div>
+
+                <div class="product-actions">
+
+                    <button
+                        type="button"
+                        id="exportButton"
+                        class="export-button">
+                        ⬇ Export CSV
+                    </button>
+
+                    <button type="button" id="addButton">
+                        + Add Product
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- PRODUCT SEARCH -->
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="Search products by name or category..."
+                aria-label="Search products"
+            >
+
+            <!-- PRODUCT TABLE -->
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Selling Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="productTable"></tbody>
+
+                </table>
+
+            </div>
+
+            <p id="message" role="status"></p>
+
+        </section>
+
+
+        <!-- SALES MANAGEMENT -->
+        <section id="sales" class="panel sales-section">
+
+            <div class="panel-header">
+
+                <div>
+                    <h2>💰 Sales Management</h2>
+                    <p>Record sales and automatically update inventory.</p>
+                </div>
+
+            </div>
+
+            <!-- RECORD SALE FORM -->
+            <form id="salesForm">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="saleProduct">
+                            Select Product
+                        </label>
+
+                        <select id="saleProduct" required>
+                            <option value="">Choose a product</option>
+                        </select>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="saleQuantity">
+                            Quantity Sold
+                        </label>
+
+                        <input
+                            type="number"
+                            id="saleQuantity"
+                            min="1"
+                            step="1"
+                            required
+                        >
+
+                        <small id="availableStock"></small>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="salePrice">
+                            Selling Price per Unit (₹)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="salePrice"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                <button type="submit" id="recordSaleButton">
+                    Record Sale
+                </button>
+
+                <p
+                    id="salesMessage"
+                    role="status"
+                    aria-live="polite">
+                </p>
+
+            </form>
+
+
+            <!-- RECENT SALES HISTORY -->
+            <hr class="sales-divider">
+
+            <h2>Recent Sales</h2>
+
+            <p>
+                View your recorded transactions, revenue and gross profit.
+            </p>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Sale ID</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Revenue</th>
+                            <th>Gross Profit</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="salesTable">
+                        <tr>
+                            <td colspan="7">Loading sales...</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <p
+                id="salesHistoryMessage"
+                role="status"
+                aria-live="polite">
+            </p>
+
+        </section>
+
+
+        <!-- ADD PRODUCT FORM -->
+        <section id="addProductSection" class="panel" hidden>
+
+            <div class="panel-header">
+
+                <div>
+                    <h2>Add New Product</h2>
+                    <p>Enter the product details below.</p>
+                </div>
+
+                <button type="button" id="cancelButton">
+                    Cancel
+                </button>
+
+            </div>
+
+            <form id="productForm">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+
+                        <input
+                            type="text"
+                            id="productName"
+                            maxlength="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productCategory">Category</label>
+
+                        <input
+                            type="text"
+                            id="productCategory"
+                            maxlength="100"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="costPrice">Cost Price (₹)</label>
+
+                        <input
+                            type="number"
+                            id="costPrice"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="sellingPrice">Selling Price (₹)</label>
+
+                        <input
+                            type="number"
+                            id="sellingPrice"
+                            min="0"
+                            step="0.01"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stockQuantity">Stock Quantity</label>
+
+                        <input
+                            type="number"
+                            id="stockQuantity"
+                            min="0"
+                            step="1"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="minimumStock">
+                            Minimum Stock Alert
+                        </label>
+
+                        <input
+                            type="number"
+                            id="minimumStock"
+                            min="0"
+                            step="1"
+                            value="5"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <button type="submit" id="saveProductButton">
+                    Save Product
+                </button>
+
+                <p id="formMessage" role="status"></p>
+
+            </form>
+
+        </section>
+
+
+        <!-- FOOTER -->
+        <footer>
+            © 2026 ShopInsight | Smart Retail Analytics Platform
+        </footer>
+
+    </main>
+
+
+    <!-- EDIT PRODUCT POPUP -->
+    <div id="editModal" class="edit-modal" hidden>
+
+        <div class="edit-modal-content">
+
+            <h2>Edit Product</h2>
+
+            <form id="editProductForm">
+
+                <label for="editName">Product Name</label>
+                <input type="text" id="editName" required>
+
+                <label for="editCategory">Category</label>
+                <input type="text" id="editCategory" required>
+
+                <label for="editCostPrice">Cost Price (₹)</label>
+                <input
+                    type="number"
+                    id="editCostPrice"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+                <label for="editSellingPrice">Selling Price (₹)</label>
+                <input
+                    type="number"
+                    id="editSellingPrice"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+                <label for="editStock">Stock Quantity</label>
+                <input
+                    type="number"
+                    id="editStock"
+                    min="0"
+                    step="1"
+                    required
+                >
+
+                <label for="editMinimumStock">Minimum Stock</label>
+                <input
+                    type="number"
+                    id="editMinimumStock"
+                    min="0"
+                    step="1"
+                    required
+                >
+
+                <p id="editMessage" role="status"></p>
+
+                <div class="edit-modal-actions">
+
+                    <button
+                        type="submit"
+                        id="updateProductButton">
+                        Save Changes
+                    </button>
+
+                    <button
+                        type="button"
+                        id="closeEditButton">
+                        Cancel
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUPABASE LIBRARY -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- SUPABASE CONFIGURATION -->
+    <script src="supabase.js"></script>
+
+    <!-- CHART.JS LIBRARY -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- AUTHENTICATION CHECK -->
+    <script>
+        async function checkAuthentication() {
+
+            const {
+                data: { user },
+                error
+            } = await supabaseClient.auth.getUser();
+
+            if (error || !user) {
+                window.location.replace("login.html");
+                return;
+            }
+
+            // Load dashboard JavaScript after authentication
+            const script = document.createElement("script");
+
+            script.src = "script.js";
+
+            script.onerror = function () {
+                console.error("Unable to load script.js");
+            };
+
+            document.body.appendChild(script);
+        }
+
+        checkAuthentication();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | ShopInsight</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1>📊 ShopInsight</h1>
+            <p class="subtitle">Smart Retail Analytics Platform</p>
+
+            <h2>Create Account</h2>
+            <p class="description">Join ShopInsight to manage your retail analytics.</p>
+
+            <form id="signupForm">
+                <label for="fullName">Full Name</label>
+                <input
+                    type="text"
+                    id="fullName"
+                    placeholder="Enter your name"
+                    autocomplete="name"
+                    required
+                >
+
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    autocomplete="email"
+                    required
+                >
+
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="At least 8 characters"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required
+                >
+
+                <label for="confirmPassword">Confirm Password</label>
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    placeholder="Re-enter your password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required
+                >
+
+                <button type="submit" id="signupButton">Create Account</button>
+
+                <p id="authMessage" role="status" aria-live="polite"></p>
+            </form>
+
+            <p class="switch-page">
+                Already have an account?
+                <a href="login.html">Login</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+
+    <script>
+        const signupForm = document.getElementById("signupForm");
+        const signupButton = document.getElementById("signupButton");
+        const authMessage = document.getElementById("authMessage");
+
+        signupForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const fullName = document.getElementById("fullName").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            authMessage.textContent = "";
+
+            if (password !== confirmPassword) {
+                authMessage.textContent = "Passwords do not match.";
+                return;
+            }
+
+            signupButton.disabled = true;
+            signupButton.textContent = "Creating account...";
+
+            try {
+                const { data, error } = await supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: fullName
+                        }
+                    }
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+                if (data.session) {
+                    window.location.href = "index.html";
+                } else {
+                    authMessage.style.color = "green";
+                    authMessage.textContent =
+                        "Account created! Check your email to confirm your account, then log in.";
+                    signupForm.reset();
+                }
+            } catch (error) {
+                authMessage.style.color = "#dc2626";
+                authMessage.textContent = error.message || "Unable to create account.";
+            } finally {
+                signupButton.disabled = false;
+                signupButton.textContent = "Create Account";
+            }
+        });
+    </script>
+
+</body>
+</html>
